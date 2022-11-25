@@ -18,8 +18,8 @@
     "build:dev:mac": "vue-cli-service electron:build --mode dev --mac",
     "build:test:mac": "vue-cli-service electron:build --mode test --mac",
     "build:prod:mac": "vue-cli-service electron:build --mode prod --mac",
-    "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps"
+    "post-install": "electron-builder install-app-deps",
+    "post-uninstall": "electron-builder install-app-deps"
   },
   "main": "background.js",
   "dependencies": {
