@@ -3,8 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "electron:serve": "vue-cli-service electron:serve --mode dev --win --x64",
+    "serve": "vue-cli-service electron:serve --mode dev --win --x64",
     "lint": "vue-cli-service lint",
     "icon": "electron-icon-builder --input=./public/icon.png --output=./public",
     "build:dev": "vue-cli-service build --mode dev",

@@ -1,7 +1,9 @@
 /** @format */
 export default class Socket {
-  constructor(socketUrl) {
+  constructor(options) {
+    const { socketUrl, heartbeat } = options;
     this.socketUrl = socketUrl;
+    this.heartbeatInterval = heartbeat || 30000;
     this.timer = null;
     this.closeWs = false;
     this.heartbeatOpen = false;
@@ -37,7 +39,6 @@ export default class Socket {
             cb('Connection to server opened');
           })
         : '';
-      console.log('Connection to server opened');
       this.ws.send(JSON.stringify({ type: 'heart' }));
       this.deps.get('isConnect')
         ? this.deps.get('isConnect').forEach((cb) => {
@@ -54,7 +55,6 @@ export default class Socket {
             cb('web socket has failed  from closeState');
           })
         : '';
-      console.log('web socket has failed  from closeState');
     };
     this.ws.onerror = () => {
       this.deps.get('error')
@@ -62,7 +62,6 @@ export default class Socket {
             cb('web socket has failed from errorState');
           })
         : '';
-      console.log('web socket has failed  from errorState');
       _handleError();
     };
     this.socket_subscribe = () => {
@@ -73,10 +72,6 @@ export default class Socket {
               cb(JSON.stringify(message));
             })
           : '';
-        if (message.type === 'heartbeat') return;
-        if (message.type === 'webpack') {
-          console.log('webpack');
-        }
       };
     };
   }
@@ -100,7 +95,12 @@ export default class Socket {
     if (this.timer) clearTimeout(this.timer);
     this.timer = setTimeout(() => {
       if (this.ws.readyState === 1 || this.ws.readyState === 0) {
-        this.ws.send(JSON.stringify({ type: 'heartbeat', msg: '心跳循环' }));
+        this.ws.send(JSON.stringify({ type: 'heartbeat' }));
+        this.deps.get('send')
+          ? this.deps.get('send').forEach((cb) => {
+              cb(JSON.stringify({ type: 'heartbeat' }));
+            })
+          : '';
         this.heartbeat();
       } else {
         if (this.closeWs) return;
@@ -112,6 +112,6 @@ export default class Socket {
             cb(this.ws.readyState === 1 || this.ws.readyState === 0);
           })
         : '';
-    }, 3000);
+    }, this.heartbeatInterval);
   }
 }
